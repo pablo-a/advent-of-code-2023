@@ -1,17 +1,46 @@
+import re
+
 NUMBERS = [str(i) for i in range(10)]
+LETTERS_NUMBER = {
+    "one": 1,
+    "two": 2,
+    "three": 3,
+    "four": 4,
+    "five": 5,
+    "six": 6,
+    "seven": 7,
+    "eight": 8,
+    "nine": 9,
+}
+
+NUMBER = r"|".join(LETTERS_NUMBER)
+NUMBER_REGEX = rf"^{NUMBER}"
+
+
+def match_digit_written_in_letter(line: str):
+    match = re.match(NUMBER_REGEX, line)
+    if match:
+        return LETTERS_NUMBER[match.group()]
+    return None
 
 
 def get_digits(line: str) -> tuple[int, int]:
-    for char in line:
+    for index, char in enumerate(line):
         if char in NUMBERS:
             first = int(char)
             break
+        if match := match_digit_written_in_letter(line[index:]):
+            first = match
+            break
 
-    for char in line[::-1]:
+    for index in range(len(line) - 1, -1, -1):
+        char = line[index]
         if char in NUMBERS:
             last = int(char)
             break
-
+        if match := match_digit_written_in_letter(line[index:]):
+            last = match
+            break
     return first, last
 
 
